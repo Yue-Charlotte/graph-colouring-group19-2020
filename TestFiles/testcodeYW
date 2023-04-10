@@ -1,0 +1,88 @@
+//! INSERT YOUR CODE HERE!
+
+		//reads the connection from edges
+		int[][]a =new int[100][100];   // vertices limited, in this case it should less than 100
+		//actually, the default setting for limited vertices can be changed, vertices can be bigger than 100, but consider the running-time, it should be as least as possible.But we have a test file for more than 100 vertices, so...
+		
+		for (int i = 0; i < m; i++) {
+			int x = e[i].u;
+			int y = e[i].v;
+			a[x][y] = 1;
+			a[y][x] = 1;
+			/* 1 represents these are connected (adjacent)
+			 *  actually I am guessing it can use seen(boolean)here to represent "connected"
+			 *  and using branching to color but I haven't understood branching thoroughly 
+			 *  If using branching, it is still graph coloring backtracking
+			 *  https://www.youtube.com/watch?v=miCYGGrTwFU maybe this could work for boolean(haven't dig into it yet),but a lot of inspiration comes from it
+			 */
+		}
+
+		int k = n;   //vertices need to be coloured
+		int[] b = new int[100];//mentioned before,less than 100
+		b[0]= 100; //default setting
+		trackback(a, b, m, n, k);//backtracking
+		System.out.println("(For your information, this graph has chromatic number " + b[0]+"). ");//print out the results
+
+	}
+
+	/* Interpretation may have mistakes.Using recursion.
+	 * This method is pretty time-consuming.If you use graph04 to test it will take 15 mins to give u an answer
+	 * So generally it is not recommended.But it can be referenced.Probably concerning using branching is a good idea.
+	 * You can also use test graph in graph-format.txt below to test
+VERTICES = 6
+EDGES = 7
+1 2
+2 3
+3 1
+1 4
+4 5
+5 6
+6 4
+	 * */
+
+	public static void trackback(int[][]a, int[] b, int m, int n, int k) { //actually m is not necessary
+		int tmp = n;      //vertices,can also directly use n
+		int state = 0, i, j; //initialize state,i, j for loops below
+
+		if (tmp <= 0) {   //base case
+
+			int temp = b[1];   //the last node we check(we start from n,so 1 is the last), which means it represents the number of color this time
+
+			for (int r = 1; r <= k; r++) {    //actually not sure the function of this loop
+				if (temp < b[r]) // b[r] is the colors in loops we used
+					temp = b[r]; //to be sure use the least color
+			}
+
+			if (temp < b[0])// b[0] is the default setting color above
+				b[0] = temp;
+
+			return;//return result
+		}
+
+
+		for (i = 1; i <= k; i++) {// color
+			state = 0;
+			b[tmp] = i;
+
+			for (j = 1; j <= k; j++)	{  // check edges connection
+
+				if (a[tmp][j] == 1 && b[j] != b[tmp]) {  // they are connected but color are not the same,continue
+					continue;// trackback(a,b,m,n-1,k);
+
+				} else if (b[j] == b[tmp] && a[tmp][j] == 1) {  //they are connected but color are the same
+					if (j == tmp)// if it connects to itself,then leave it 
+						continue;
+					state = 1;
+					break;// add a new color (means start next i loop)
+				}
+			}
+
+			if (state != 1) {
+				trackback(a, b, m, n - 1, k);
+			}
+
+		}
+
+
+	}
+

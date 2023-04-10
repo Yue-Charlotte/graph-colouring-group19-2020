@@ -1,0 +1,175 @@
+	!!!! Remember to add first public static int Solution = 100; or just int Solution = 100 below
+  
+  
+  Graph testg = new Graph(n);
+
+		for(int i = 0;i< e.length;i++) {
+				testg.AddEdge(e[i].u-1, e[i].v-1);
+
+		}
+
+		//fill graph class with input from textfile
+
+		//start calculation
+
+		for(int j = 1;j<testg.GetVertexCount();j++) {
+			int c = method1(testg, j);
+			if(c<Solution) {//store the chromatic number
+				Solution=c;
+			}
+		}
+		//return the result
+		System.out.println("(For your information, this graph has chromatic number " + Solution+ ".)");
+
+	}//end of main method
+
+	//Method 1:
+	//Main Method
+	//void method with 2 parameters: graph and int (amount of colours we plan on using)
+	//create int and fill with vertexcount from graph 
+	//create array of vertices where we assign the colours
+	//set array values to 0 (standard in java)
+	//use method 2 to check for solution > solution found is based on return value
+	//---<<code here>>----
+
+
+	//main backtracking coloring function
+	public static int method1(Graph g,int c) {
+
+		int vertexCount = g.GetVertexCount();
+
+		//color array
+		int[] colours = new int[vertexCount];
+
+		//call checkSolution for vertex0
+		if(checkSolution(g, c, colours, 0) ){
+			return c;
+		}
+
+		return Solution;
+
+	}
+
+
+
+
+	//Method 2:
+	//-recursion method that checks all vertices
+	//boolean method with 4 parameters: graph, int (amount of colours allowed), array of colours, vertices
+	//if vertices are all coloured then return true
+	//for loop that checks different colour per vertex
+	//use method 3 to check if colour is valid, if yes then fill this vertex with colour
+	//use recursion to repeat process with vertex + 1 > return true after all vertices are done
+	//return false if unable to assign colours to all vertices
+	//---<<code here>>----
+public static boolean checkSolution(Graph g, int c,int[] C,int v) {
+		//it it true when all vertices have a color
+		if(v == g.GetVertexCount()) {
+			return true;
+		}
+
+		//try different colors for v
+		for(int i=1;i<=c;i++) {
+			//check the color c assigned to v is fine or not
+			if(isSafe(g,v,C,i)) {
+				C[v]= i;  //fill the color
+			}
+		}
+
+		//recursion to assign colors to rest of the vertices (from 0 ~ all the vertices)
+		checkSolution(g,c,C,v+1) ;
+
+    //check if it is all coloured
+		for(int j = 0; j <C.length;j++) {
+				if(C[j]==0) {
+					return false;
+				}
+		}
+
+		return true;
+	}
+
+	//Method 3:
+	//Method to check if connected vertices don't have the same colour
+	//boolean method with 4 parameters: graph, vertices, array of colours, int colour
+	//for loop that loops until graphs vertixcount
+	//if graph has an edge between the vertex and the loop index and colour parameter == vertex with that colour > return false
+	//else return true
+	//---<<code here>>----
+	//backtracking coloring utility functions
+	public static boolean isSafe(Graph g,int v,int[] C,int cr) {
+
+
+		for(int i=0;i<g.GetVertexCount();i++) {
+			if(g.HasEdge(v,i) && cr == C[i]) {
+				return false;
+			}
+
+		}
+
+		return true;
+	}
+
+
+}//end of class
+
+//Graph class
+class Graph
+{
+	private int vertexcount;
+	private List<Integer>[] adjacent;
+
+	//basic method for retrieving vertexcount
+	public int GetVertexCount()
+	{
+		return vertexcount;
+	}
+
+	//Constructor
+	public Graph(int vCount)
+	{
+		this.vertexcount = vCount;
+		adjacent = (List<Integer>[])new List[vCount];  
+		for (int i = 0; i < vCount; i++)
+		{
+			adjacent[i] = new ArrayList<Integer>();
+		}			
+	}
+
+	public Graph() {
+		// TODO Auto-generated constructor stub
+	}
+
+	//add edge to graph class
+	public void AddEdge(int a, int b)
+	{
+		adjacent[a].add(b);
+		adjacent[b].add(a);
+	}
+
+	//boolean method to check if edge exists
+	public boolean HasEdge(int i, int j) 
+	{
+		return adjacent[i].contains(j);
+	}
+
+	//return list with edges linked to this vertex
+	public List<Integer> Connected(int vertex) 
+	{
+		return adjacent[vertex];
+	}
+
+	//----Code to print graph----- ignore for now
+	// public void printGraph() {
+	// 	for (int i = 0; i < vertexcount; i++) {
+	// 		List<Integer> edges = Connected(i);
+	// 		System.out.print(i + ": ");
+	// 		for (int j = 0; j < edges.size(); j++) {
+	// 			System.out.print(edges.get(j) + " ");
+	// 		}
+	// 		System.out.println();
+	// 	}
+	// }
+
+
+}
